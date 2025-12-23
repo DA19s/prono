@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                      String       @id @default(uuid())
+  firstName               String
+  lastName                String
+  email                   String       @unique
+  emailVerified           Boolean      @default(false)
+  pendingEmail            String?
+  emailVerificationCode   String?
+  emailVerificationExpiry DateTime?
+  password                String
+  code                    String?
+  phone                   String
+  isActive                Boolean      @default(false)
+  role                    Role         @default(USER)
+  totalPoints             Int          @default(0)
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  activationToken         String?
+  activationExpires       DateTime?
+  predictions             Prediction[]
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  apiId       Int      @unique
+  name        String
+  code        String?
+  logo        String?
+  country     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  awayMatches Match[]  @relation("AwayTeam")
+  homeMatches Match[]  @relation("HomeTeam")
+
+  @@index([name])
+}
+
+model Match {
+  id                String       @id @default(uuid())
+  apiId             Int          @unique
+  date              DateTime?  // Optionnel pour les matchs bracket non encore programmés
+  status            MatchStatus  @default(SCHEDULED)
+  homeTeamId        String?
+  awayTeamId        String?
+  homeScore         Int?
+  awayScore         Int?
+  homeScoreHalfTime Int?
+  awayScoreHalfTime Int?
+  homePenalties     Int?  // Score des tirs au but pour l'équipe domicile
+  awayPenalties     Int?  // Score des tirs au but pour l'équipe extérieure
+  round             String?
+  stage             String?
+  venue             String?
+  city              String?
+  isPronosticOpen   Boolean      @default(true)
+  pronosticDeadline DateTime
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  // Champs pour le bracket d'élimination directe
+  bracketRound      BracketRound?
+  bracketPosition   Int?         // Position dans le bracket (1-8 pour 8èmes, 1-4 pour quarts, etc.)
+  parentMatch1Id    String?      // Premier match parent (pour quarts, demis, finale)
+  parentMatch2Id    String?      // Second match parent (pour quarts, demis, finale)
+  parentMatch1      Match?       @relation("BracketParent1", fields: [parentMatch1Id], references: [id])
+  parentMatch2      Match?       @relation("BracketParent2", fields: [parentMatch2Id], references: [id])
+  childMatches1     Match[]      @relation("BracketParent1")
+  childMatches2     Match[]      @relation("BracketParent2")
+  awayTeam          Team?        @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  homeTeam          Team?        @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  predictions       Prediction[]
+}
+
+model Prediction {
+  id                 String           @id @default(uuid())
+  userId             String
+  matchId            String
+  predictedHomeScore Int
+  predictedAwayScore Int
+  predictedHomePenalties Int?  // Score des tirs au but prédit pour l'équipe domicile
+  predictedAwayPenalties Int?  // Score des tirs au but prédit pour l'équipe extérieure
+  predictedResult    PredictionResult
+  pointsEarned       Int              @default(0)
+  isScoreCorrect     Boolean          @default(false)
+  isResultCorrect    Boolean          @default(false)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  match              Match            @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, matchId])
+  @@index([userId])
+  @@index([matchId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MatchStatus {
+  SCHEDULED
+  LIVE
+  FINISHED
+  CANCELLED
+  POSTPONED
+  PENDING  // En attente de programmation (équipes ou date non définies)
+}
+
+enum PredictionResult {
+  HOME_WIN
+  AWAY_WIN
+  DRAW
+}
+
+enum BracketRound {
+  ROUND_OF_16
+  QUARTER_FINAL
+  SEMI_FINAL
+  FINAL
+}
