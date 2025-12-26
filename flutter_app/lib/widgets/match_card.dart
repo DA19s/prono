@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/match.dart';
 import '../theme/app_theme.dart';
+import '../utils/logo_url.dart';
 
 class MatchCard extends StatelessWidget {
   final Match match;
@@ -272,30 +273,46 @@ class MatchCard extends StatelessWidget {
 
     return Column(
       children: [
+        // Normalize logo path to full URL (handles relative paths like /uploads/flags/...)
         if (team.logo != null)
-          CachedNetworkImage(
-            imageUrl: team.logo!,
-            width: 48,
-            height: 48,
-            placeholder: (context, url) => Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.sports_soccer),
-            ),
-            errorWidget: (context, url, error) => Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.sports_soccer),
-            ),
-          )
+          Builder(builder: (context) {
+            final logoUrl = getFullLogoUrl(team.logo);
+            if (logoUrl.isNotEmpty) {
+              return CachedNetworkImage(
+                imageUrl: logoUrl,
+                width: 48,
+                height: 48,
+                placeholder: (context, url) => Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.sports_soccer),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.sports_soccer),
+                ),
+              );
+            } else {
+              return Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.sports_soccer),
+              );
+            }
+          })
         else
           Container(
             width: 48,

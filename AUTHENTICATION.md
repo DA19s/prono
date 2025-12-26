@@ -235,3 +235,5 @@ REFRESH_TOKEN_SECRET=votre_refresh_secret
 - Les mots de passe sont hashés avec bcrypt avant stockage
 
 
+
+

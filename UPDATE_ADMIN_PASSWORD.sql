@@ -23,3 +23,4 @@ WHERE "email" = 'admin@pronocan.com' AND "role" = 'ADMIN';
 -- WHERE "id" = 'USER_ID';
 
 
+

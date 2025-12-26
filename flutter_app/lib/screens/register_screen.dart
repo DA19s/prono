@@ -16,6 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _pseudoController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -28,6 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _pseudoController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
@@ -45,6 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final response = await _api.post('/api/auth/register', data: {
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
+        'pseudo': _pseudoController.text.trim(),
         'email': _emailController.text.trim(),
         'phone': _phoneController.text.trim(),
         'password': _passwordController.text,
@@ -159,6 +162,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez entrer votre nom';
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _pseudoController,
+                  decoration: const InputDecoration(
+                    labelText: 'Pseudo',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer votre pseudo';
                     }
                     return null;
                   },

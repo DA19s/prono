@@ -3,6 +3,7 @@ class User {
   final String firstName;
   final String lastName;
   final String email;
+  final String pseudo;
   final String? phone;
   final int totalPoints;
   final String role;
@@ -12,6 +13,7 @@ class User {
     required this.id,
     required this.firstName,
     required this.lastName,
+    required this.pseudo,
     required this.email,
     this.phone,
     required this.totalPoints,
@@ -25,6 +27,7 @@ class User {
       firstName: json['firstName'],
       lastName: json['lastName'],
       email: json['email'],
+      pseudo: json['pseudo'],
       phone: json['phone'],
       totalPoints: json['totalPoints'] ?? 0,
       role: json['role'] ?? 'USER',
@@ -34,5 +37,7 @@ class User {
 
   String get fullName => '$firstName $lastName';
 }
+
+
 
 

@@ -10,15 +10,16 @@ const SALT_ROUNDS = 10;
  */
 const register = async (req, res, next) => {
   try {
-    const { firstName, lastName, email, password, phone } = req.body;
+    const { firstName, lastName, pseudo, email, password, phone } = req.body;
 
-    console.log('📝 Données reçues:', { firstName, lastName, email, phone: phone ? 'présent' : 'absent', password: password ? 'présent' : 'absent' });
+    console.log('📝 Données reçues:', { firstName, lastName, pseudo, email, phone: phone ? 'présent' : 'absent', password: password ? 'présent' : 'absent' });
 
-    // Validation
-    if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !password || !phone?.trim()) {
+    // validation
+    if (!firstName?.trim() || !lastName?.trim() || !pseudo?.trim() || !email?.trim() || !password || !phone?.trim()) {
       const missingFields = [];
       if (!firstName?.trim()) missingFields.push('prénom');
       if (!lastName?.trim()) missingFields.push('nom');
+      if (!pseudo?.trim()) missingFields.push('pseudo');
       if (!email?.trim()) missingFields.push('email');
       if (!password) missingFields.push('mot de passe');
       if (!phone?.trim()) missingFields.push('téléphone');
@@ -59,6 +60,16 @@ const register = async (req, res, next) => {
       });
     }
 
+    const existingPseudo = await prisma.user.findFirst({
+      where: { pseudo: pseudo.trim() }
+    });
+
+    if (existingPseudo) {
+      return res.status(400).json({ 
+        message: 'Un compte avec ce pseudo existe déjà' 
+      });
+    }
+
     // Hasher le mot de passe
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
@@ -74,6 +85,7 @@ const register = async (req, res, next) => {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           email: email.trim().toLowerCase(),
+          pseudo: pseudo.trim(),
           password: hashedPassword,
           phone: cleanPhone,
           role: 'USER',
@@ -86,6 +98,7 @@ const register = async (req, res, next) => {
           firstName: true,
           lastName: true,
           email: true,
+          pseudo: true,
           phone: true,
           role: true,
           totalPoints: true,
@@ -244,6 +257,7 @@ const login = async (req, res, next) => {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
+      pseudo: user.pseudo,
       email: user.email,
       phone: user.phone,
       role: user.role,
@@ -410,6 +424,7 @@ const verifyCode = async (req, res, next) => {
         firstName: true,
         lastName: true,
         email: true,
+        pseudo: true,
         phone: true,
         role: true,
         totalPoints: true,

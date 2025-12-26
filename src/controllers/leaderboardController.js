@@ -16,6 +16,7 @@ const getLeaderboard = async (req, res, next) => {
         id: true,
         firstName: true,
         lastName: true,
+        pseudo: true,
         email: true,
         totalPoints: true,
         _count: {
@@ -56,6 +57,7 @@ const getUserRank = async (req, res, next) => {
         id: true,
         firstName: true,
         lastName: true,
+        pseudo: true,
         totalPoints: true
       }
     });
@@ -88,5 +90,7 @@ module.exports = {
   getLeaderboard,
   getUserRank
 };
+
+
 
 

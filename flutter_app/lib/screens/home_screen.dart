@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             const Text(
               'Pronocan',
               style: TextStyle(
-                color: Colors.white,
+                color: Color.fromARGB(255, 38, 43, 136),
                 fontWeight: FontWeight.bold,
               ),
             ),

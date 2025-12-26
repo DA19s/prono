@@ -103,7 +103,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                                 Text(
-                                  '#${_myRank!.rank} - ${_myRank!.fullName}',
+                                  '#${_myRank!.rank} - ${_myRank!.pseudo}',
                                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -182,7 +182,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                     ),
                                   ),
                                   title: Text(
-                                    entry.fullName,
+                                    entry.pseudo,
                                     style: TextStyle(
                                       fontWeight: isMyRank
                                           ? FontWeight.bold

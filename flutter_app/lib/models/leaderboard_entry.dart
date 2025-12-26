@@ -2,6 +2,7 @@ class LeaderboardEntry {
   final int rank;
   final String userId;
   final String firstName;
+  final String pseudo;
   final String lastName;
   final String email;
   final int totalPoints;
@@ -12,6 +13,7 @@ class LeaderboardEntry {
     required this.userId,
     required this.firstName,
     required this.lastName,
+    required this.pseudo,
     required this.email,
     required this.totalPoints,
     required this.predictionsCount,
@@ -23,6 +25,7 @@ class LeaderboardEntry {
       userId: json['id'],
       firstName: json['firstName'],
       lastName: json['lastName'],
+      pseudo: json['pseudo'],
       email: json['email'],
       totalPoints: json['totalPoints'] ?? 0,
       predictionsCount: json['predictionsCount'] ?? 0,
@@ -31,5 +34,7 @@ class LeaderboardEntry {
 
   String get fullName => '$firstName $lastName';
 }
+
+
 
 
